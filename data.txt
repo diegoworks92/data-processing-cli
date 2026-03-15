@@ -1,12 +1,15 @@
 blue
-red
-red
-yellow
-green
-green
-black
- whi te
-white
-114
-27
 3
+red
+red
+Snow White
+green
+114
+Burnt Sienna
+green
+Navy Blue
+Sky Blue
+deep purple
+white
+27
+ pink

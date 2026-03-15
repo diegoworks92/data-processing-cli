@@ -1,32 +1,9 @@
-/* import { Transform } from "node:stream";
-
-export const createSortStream = () => {
-  let buffer = "";
-
-  return new Transform({
-    transform(chunk, encoding, callback) {
-      buffer += chunk.toString();
-      callback();
-    },
-
-    flush(callback) {
-      const lines = buffer.split("\n");
-
-      lines.sort();
-
-      this.push(lines.join("\n"));
-
-      callback();
-    },
-  });
-};
-
-
- */
 import { Transform } from "node:stream";
 
-export const createSortStream = () => {
+export const createSortStream = (args) => {
   let buffer = "";
+
+  const fieldIndex = args.field ? parseInt(args.field) - 1 : null;
 
   return new Transform({
     transform(chunk, encoding, callback) {
@@ -35,20 +12,25 @@ export const createSortStream = () => {
     },
 
     flush(callback) {
-      const lines = buffer
-        .trim()
-        .split(/\r?\n/)
-        .filter((line) => line.length > 0);
+      const lines = buffer.split(/\r?\n/).filter((line) => line.trim() !== "");
 
       lines.sort((a, b) => {
-        const numA = parseFloat(a);
-        const numB = parseFloat(b);
+        let valA = a;
+        let valB = b;
+
+        if (fieldIndex !== null) {
+          valA = a.split(/\s+/)[fieldIndex] || "";
+          valB = b.split(/\s+/)[fieldIndex] || "";
+        }
+
+        const numA = parseFloat(valA);
+        const numB = parseFloat(valB);
 
         if (!isNaN(numA) && !isNaN(numB)) {
           return numA - numB;
         }
 
-        return a.localeCompare(b);
+        return valA.localeCompare(valB);
       });
 
       this.push(lines.join("\n") + "\n");

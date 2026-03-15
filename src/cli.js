@@ -1,13 +1,3 @@
-/* import { parseArgs } from "./parser.js";
-import { createPipeline } from "./pipeline.js";
-
-const args = parseArgs();
-
-const pipeline = createPipeline(args);
-
-process.stdin.pipe(pipeline).pipe(process.stdout);
- */
-
 import { pipeline } from "node:stream/promises";
 import { parseArgs } from "./parser.js";
 import { createPipeline } from "./pipeline.js";

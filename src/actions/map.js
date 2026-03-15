@@ -1,16 +1,31 @@
 import { Transform } from "node:stream";
 
-export const createMapStream = () => {
+export const createMapStream = (args) => {
+  const fieldIndex = args.field ? parseInt(args.field) - 1 : null;
+
   return new Transform({
-    transform(chunk, encodging, callback) {
+    transform(chunk, encoding, callback) {
       const lines = chunk.toString().split(/\r?\n/);
 
-      const reversedLines = lines.map((line) =>
-        line.split("").reverse().join(""),
-      );
+      const mappedLines = lines.map((line) => {
+        if (!line.trim()) return line;
 
-      this.push(reversedLines.join("\n") + "\n");
+        if (fieldIndex !== null) {
+          const columns = line.split(/\s+/);
+          if (columns[fieldIndex]) {
+            columns[fieldIndex] = columns[fieldIndex]
+              .split("")
+              .reverse()
+              .join("");
+            return columns.join(" ");
+          }
+          return line;
+        }
 
+        return line.split("").reverse().join("");
+      });
+
+      this.push(mappedLines.join("\n") + "\n");
       callback();
     },
   });
